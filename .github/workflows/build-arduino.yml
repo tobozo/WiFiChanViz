@@ -23,6 +23,8 @@ jobs:
         matrix-context:
           - M5Core2
           - M5Stack
+          - M5Fire
+          - OdroidGo
 
         include:
           - matrix-context: M5Core2
@@ -34,6 +36,16 @@ jobs:
             arduino-boards-fqbn: esp32:esp32:m5stack-core-esp32
             sketch-names: WiFiChanViz.ino
             bin-name: WiFiChanViz.M5Stack.bin
+            required-libraries: "LovyanGFX,ESP32-Chimera-Core,M5Stack-SD-Updater"
+          - matrix-context: M5Fire
+            arduino-boards-fqbn: esp32:esp32:m5stack-fire
+            sketch-names: WiFiChanViz.ino
+            bin-name: WiFiChanViz.M5Fire.bin
+            required-libraries: "LovyanGFX,ESP32-Chimera-Core,M5Stack-SD-Updater"
+          - matrix-context: OdroidGo
+            arduino-boards-fqbn: esp32:esp32:odroid_esp32
+            sketch-names: WiFiChanViz.ino
+            bin-name: WiFiChanViz.OdroidGo.bin
             required-libraries: "LovyanGFX,ESP32-Chimera-Core,M5Stack-SD-Updater"
 
       fail-fast: false
