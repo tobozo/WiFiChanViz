@@ -36,3 +36,5 @@ Credits:
 
   - [@Lovyan03](https://github.com/Lovyan03) for providing the great LGFX library
   - [@virtualabs](https://github.com/virtualabs) for inspiring this project (see the [hackwatch](https://github.com/virtualabs/hackwatch))
+  - [@devurandom](https://opengameart.org/users/devurandom) for sharing the [grafx2-font-collection](https://opengameart.org/content/new-original-grafx2-font-collection) used in this demo
+
