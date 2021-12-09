@@ -57,13 +57,13 @@ jobs:
       - name: Copy compiled binary
         if: startsWith(matrix.sketch-names, 'WiFiChanViz')
         run: |
-          cp build/WiFiChanViz.ino.bin build/${{ matrix.bin-name }}
+          cp /home/runner/WiFiChanViz/build/WiFiChanViz.ino.bin /home/runner/WiFiChanViz/build/${{ matrix.bin-name }}
       - name: Upload artifact ${{ matrix.bin-name }}
         uses: actions/upload-artifact@v2
         if: startsWith(matrix.sketch-names, 'WiFiChanViz')
         with:
           name: ${{ matrix.bin-name }}
-          path: build/${{ matrix.bin-name }}
+          path: /home/runner/WiFiChanViz/build/${{ matrix.bin-name }}
 
   post_build:
     name: Gather Artefacts
