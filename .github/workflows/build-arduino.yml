@@ -1,0 +1,90 @@
+name: LibraryBuild
+on:
+  push:
+    paths:
+    - '**.ino'
+    - '**.cpp'
+    - '**.h'
+    - '**build-arduino.yml'
+  pull_request:
+  workflow_dispatch:
+  release:
+    types: [published]
+
+jobs:
+
+  matrix_build:
+    name: ${{ matrix.matrix-context }} (${{ matrix.sketch-names }})
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+
+        matrix-context:
+          - M5Core2
+          - M5Stack
+
+        include:
+          - matrix-context: M5Core2
+            arduino-boards-fqbn: esp32:esp32:m5stack-core2
+            sketch-names: WiFiChanViz.ino
+            bin-name: WiFiChanViz.M5Core2.bin
+            required-libraries: "LovyanGFX,ESP32-Chimera-Core,M5Stack-SD-Updater"
+          - matrix-context: M5Stack
+            arduino-boards-fqbn: esp32:esp32:m5stack-core-esp32
+            sketch-names: WiFiChanViz.ino
+            bin-name: WiFiChanViz.M5Stack.bin
+            required-libraries: "LovyanGFX,ESP32-Chimera-Core,M5Stack-SD-Updater"
+
+      fail-fast: false
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+      - name: ${{ matrix.matrix-context }}
+        uses: ArminJo/arduino-test-compile@v3
+        with:
+          platform-url: https://raw.githubusercontent.com/espressif/arduino-esp32/gh-pages/package_esp32_dev_index.json
+          arduino-board-fqbn: ${{ matrix.arduino-boards-fqbn }}
+          required-libraries: ${{ matrix.required-libraries }}
+          extra-arduino-lib-install-args: --no-deps
+          sketch-names: ${{ matrix.sketch-names }}
+          set-build-path: true
+          #build-properties: ${{ toJson(matrix.build-properties) }}
+          #debug-install: true
+      - name: Copy compiled binary
+        if: startsWith(matrix.sketch-names, 'WiFiChanViz')
+        run: |
+          cp build/WiFiChanViz.ino.bin examples/WiFiChanViz/build/${{ matrix.bin-name }}
+      - name: Upload artifact ${{ matrix.bin-name }}
+        uses: actions/upload-artifact@v2
+        if: startsWith(matrix.sketch-names, 'WiFiChanViz')
+        with:
+          name: ${{ matrix.bin-name }}
+          path: build/${{ matrix.bin-name }}
+
+  post_build:
+    name: Gather Artefacts
+    runs-on: ubuntu-latest
+    # wait until matrix jobs are all finished
+    needs: matrix_build
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Create artifacts dir
+        #if: startsWith(github.ref, 'refs/tags/')
+        run: mkdir -p /home/runner/builds
+      - name: Download artifacts
+        uses: actions/download-artifact@v2
+        #if: startsWith(github.ref, 'refs/tags/')
+        with:
+          path: builds
+      - name: Release check
+        uses: softprops/action-gh-release@v1
+        if: startsWith(github.ref, 'refs/tags/')
+        with:
+          files: |
+            /home/runner/work/WiFiChanViz/WiFiChanViz/builds/**
+
