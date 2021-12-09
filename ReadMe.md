@@ -35,4 +35,4 @@ Library dependencies:
 Credits:
 
   - [@Lovyan03](https://github.com/Lovyan03) for providing the great LGFX library
-  - [virtualabs](https://github.com/virtualabs) for inspiring this project (see the [hackwatch](https://github.com/virtualabs/hackwatch))
+  - [@virtualabs](https://github.com/virtualabs) for inspiring this project (see the [hackwatch](https://github.com/virtualabs/hackwatch))
